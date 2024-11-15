@@ -1,0 +1,37 @@
+name: Docker CI/CD Pipeline
+
+# Trigger workflow on push to main branch
+on:
+  [pull_request] # You can change this to any branch you want
+
+# Define jobs
+jobs:
+  build:
+    runs-on: ubuntu-latest  # Use the latest Ubuntu image as the runner
+
+    steps:
+      # Step 1: Check out the code from the repository
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Step 2: Set up Docker Buildx (required for building multi-platform images)
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      # Step 3: Log in to Docker Hub using secrets stored in GitHub
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}  # Docker Hub username from GitHub secrets
+          password: ${{ secrets.DOCKER_PASSWORD }}  # Docker Hub password from GitHub secrets
+
+      # Step 4: Build the Docker image
+      - name: Build Docker image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/flask:latest .
+        
+      # Step 5: Push the Docker image to Docker Hub
+      - name: Push Docker image
+        run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/flask:latest
+
