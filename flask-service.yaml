@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: all-in-one-service
+spec:
+  selector:
+    app: all-in-one
+  ports:
+    - protocol: TCP
+      port: 5000  # Expose port for Flask app
+      targetPort: 5000
+      name: flask-app-port
+    - protocol: TCP
+      port: 5432  # Expose port for PostgreSQL database
+      targetPort: 5432
+      name: db-port
+    - protocol: TCP
+      port: 80    # Expose port for pgAdmin
+      targetPort: 80
+      name: pgadmin-port
+  type: NodePort  # Expose the service externally (works with Minikube)
