@@ -1,0 +1,94 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: all-in-one
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: all-in-one
+  template:
+    metadata:
+      labels:
+        app: all-in-one
+    spec:
+      containers:
+        - name: flask-app
+          image: manavm18/flask:new # Replace with your actual image name
+          env:
+            - name: DATABASE_URL
+              value: postgresql://admin:admin@localhost:5432/mydb
+            - name: FLASK_ENV
+              value: "production"
+            - name: FLASK_APP
+              value: "app.py"
+          ports:
+            - containerPort: 5000  # Flask runs on port 5000 inside the container
+          readinessProbe:
+            httpGet:
+              path: /api/items
+              port: 5000
+            initialDelaySeconds: 10   # Adjusted to give the app time to start
+            periodSeconds: 10
+            failureThreshold: 3  # Fail after 3 unsuccessful attempts
+          livenessProbe:
+            httpGet:
+              path: /api/items
+              port: 5000
+            initialDelaySeconds: 20  # Delay longer for the liveness probe
+            periodSeconds: 10
+            failureThreshold: 5  # Fail after 5 unsuccessful attempts
+
+        - name: postgres
+          image: postgres:13
+          env:
+            - name: POSTGRES_USER
+              value: admin
+            - name: POSTGRES_PASSWORD
+              value: admin
+            - name: POSTGRES_DB
+              value: mydb
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/data
+          readinessProbe:
+            exec:
+              command:
+                - "pg_isready"
+                - "-U"
+                - "admin"
+                - "-d"
+                - "mydb"
+            initialDelaySeconds: 10  # Allow some time for DB to initialize
+            periodSeconds: 10
+            failureThreshold: 5
+            timeoutSeconds: 5
+
+        - name: pgadmin
+          image: dpage/pgadmin4
+          env:
+            - name: PGADMIN_DEFAULT_EMAIL
+              value: "admin@admin.com"
+            - name: PGADMIN_DEFAULT_PASSWORD
+              value: "admin"
+          ports:
+            - containerPort: 80
+
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: postgres-pvc
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
