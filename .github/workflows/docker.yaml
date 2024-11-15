@@ -34,4 +34,30 @@ jobs:
       - name: Push Docker image
         run: |
           docker push ${{ secrets.DOCKER_USERNAME }}/flask:latest
+      
+      # Step 5: Run Docker container in detached mode
+      - name: Run Docker container
+        run: |
+          docker run -d -p 5000:5000 ${{ secrets.DOCKER_USERNAME }}/flask:latest
+
+      # Step 6: Wait for the Flask app to start (add a small sleep)
+      - name: Wait for Flask app to start
+        run: |
+          sleep 10  # Give the Flask app time to start
+
+      # Step 7: Send a GET request to /api/items and check if the response is 200 OK
+      - name: Test /api/items endpoint
+        run: |
+          response=$(curl --write-out "%{http_code}" --silent --output /dev/null http://localhost:5000/api/items)
+          if [ "$response" -eq 200 ]; then
+            echo "GET /api/items succeeded with status 200"
+          else
+            echo "GET /api/items failed with status $response"
+            exit 1  # Fail the workflow if status code is not 200
+          fi
+
+      # Step 8: Optionally, stop and remove the Docker container after testing
+      - name: Stop Docker container
+        run: |
+          docker ps -q --filter "ancestor=${{ secrets.DOCKER_USERNAME }}/flask:latest" | xargs docker stop | xargs docker rm
 
