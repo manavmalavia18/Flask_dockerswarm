@@ -10,7 +10,7 @@ services:
     depends_on:
       - db  # Ensure the database container is up before starting Flask
     environment:
-      - DATABASE_URL=postgresql://admin:admin@db:5432/mydb
+      - DATABASE_URL=${DATABASE_URL}
       - DB_HOST=db
 
   # pgAdmin Service
