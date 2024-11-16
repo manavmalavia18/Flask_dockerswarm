@@ -5,6 +5,7 @@ services:
   flask_app:
     image: manavm18/flask:latest
     build: .
+    container_name: flask_app 
     ports:
       - "5001:5000"  # Expose Flask app on host port 5001
     depends_on:
@@ -19,6 +20,7 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: admin
+    container_name: flask_pgadmin
     ports:
       - "5050:80"  # Expose port 5050 for pgAdmin web UI
     depends_on:
@@ -27,6 +29,7 @@ services:
   # PostgreSQL Database Container
   db:
     image: postgres:13
+    container_name: flask_db
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin

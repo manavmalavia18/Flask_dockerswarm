@@ -49,6 +49,12 @@ jobs:
       - name: Wait for Flask app to start
         run: |
           sleep 10  # Give the Flask app time to start
+      
+      - name: View container logs
+        run: |
+          # Use the static container name defined in docker-compose.yml
+          echo "Fetching logs for container flask_app..."
+          docker logs flask_app  # Get logs from the Flask container
 
       # Step 6: Send a GET request to /api/items and check if the response is 200 OK
       - name: Test /api/items endpoint
