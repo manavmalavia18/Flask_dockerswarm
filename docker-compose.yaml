@@ -7,7 +7,7 @@ services:
     build: .
     container_name: flask_app 
     ports:
-      - "5001:5000"  # Expose Flask app on host port 5001
+      - "5000:5000"  # Expose Flask app on host port 5001
     depends_on:
       - db  # Ensure the database container is up before starting Flask
     environment:
