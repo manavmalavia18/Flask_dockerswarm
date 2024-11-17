@@ -10,7 +10,7 @@ def create_app():
     app = Flask(__name__)
     
     # Configure the database
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'postgresql://admin:admin@localhost:5432/mydb')
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'postgresql://admin:admin@db:5432/mydb')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     
     # Initialize the SQLAlchemy extension with the app instance
