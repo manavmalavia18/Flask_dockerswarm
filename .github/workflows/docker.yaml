@@ -28,7 +28,7 @@ jobs:
       # Step 4: Build the Docker image
       - name: Build Docker image
         run: |
-          docker buildx build --platform linux/arm64 -t ${{ secrets.DOCKER_USERNAME }}/flask:latest .
+          docker build --platform linux/arm64 -t ${{ secrets.DOCKER_USERNAME }}/flask:latest .
         
       # Step 5: Push the Docker image to Docker Hub
       - name: Push Docker image
