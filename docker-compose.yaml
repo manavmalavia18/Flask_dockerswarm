@@ -11,8 +11,8 @@ services:
     depends_on:
       - db  # Ensure the database container is up before starting Flask
     environment:
-      - DATABASE_URL=postgresql://admin:admin@localhost:5432/mydb   #for running on github actions use this database url and change it in app.py as well
-      # - DATABASE_URL=postgresql://admin:admin@db:5432/mydb            # for running on local use this database url and change it in app.py as well
+      # - DATABASE_URL=postgresql://admin:admin@localhost:5432/mydb   #for running on github actions use this database url and change it in app.py as well
+      - DATABASE_URL=postgresql://admin:admin@db:5432/mydb            # for running on local use this database url and change it in app.py as well
       - DB_HOST=db
 
   # pgAdmin Service
